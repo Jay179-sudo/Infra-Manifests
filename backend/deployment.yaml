@@ -16,7 +16,7 @@ spec:
         app: backend
     spec:
       containers:
-        - name: Infra-Backend
+        - name: infra-backend
           image: jaypd/infrabackend:585f7a4ee2b9d251f2cd4ccd0523705494a64e77
           ports:
             - containerPort: 80
