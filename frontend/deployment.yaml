@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: vite
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vite
+  template:
+    metadata:
+      labels:
+        app: vite
+    spec:
+      containers:
+      - name: frontend
+        image: jaypd/frontend
+        ports:
+        - containerPort: 8080

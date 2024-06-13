@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+    # tiers haru introduce gara before pushing
+      app: backend-api
+  template:
+    metadata:
+      labels:
+        app: backend-api 
+    spec:
+      volumes:
+      - name: vault-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 7200
+          - configMap:
+              items:
+                - key: ca.crt
+                  path: ca.crt
+              name: kube-root-ca.crt
+      serviceAccountName: application-sa
+      containers:
+      - name: infra-backend
+        image: jaypd/backend
+        volumeMounts:
+          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+            name: vault-token
+        env:
+          - name: ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: application-cm
+                key: Environment
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: application-cm
+                key: Port
