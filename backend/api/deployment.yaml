@@ -8,40 +8,40 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-    # tiers haru introduce gara before pushing
+      # tiers haru introduce gara before pushing
       app: backend-api
   template:
     metadata:
       labels:
-        app: backend-api 
+        app: backend-api
     spec:
       volumes:
-      - name: vault-token
-        projected:
-          sources:
-          - serviceAccountToken:
-              path: token
-              expirationSeconds: 7200
-          - configMap:
-              items:
-                - key: ca.crt
-                  path: ca.crt
-              name: kube-root-ca.crt
+        - name: vault-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  expirationSeconds: 7200
+              - configMap:
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+                  name: kube-root-ca.crt
       serviceAccountName: application-sa
       containers:
-      - name: infra-backend
-        image: jaypd/backend
-        volumeMounts:
-          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-            name: vault-token
-        env:
-          - name: ENVIRONMENT
-            valueFrom:
-              configMapKeyRef:
-                name: application-cm
-                key: Environment
-          - name: PORT
-            valueFrom:
-              configMapKeyRef:
-                name: application-cm
-                key: Port
+        - name: infra-backend
+          image: jaypd/infrabackend:98f90c25500c2c7a8e650f6c1b653f5ae8209e94
+          volumeMounts:
+            - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              name: vault-token
+          env:
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: application-cm
+                  key: Environment
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: application-cm
+                  key: Port
