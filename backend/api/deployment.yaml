@@ -12,40 +12,40 @@ spec:
   template:
     metadata:
       labels:
-        app: backend-api 
+        app: backend-api
     spec:
       volumes:
-      - name: vault-token
-        projected:
-          sources:
-          - serviceAccountToken:
-              path: token
-              expirationSeconds: 7200
-          - configMap:
-              items:
-                - key: ca.crt
-                  path: ca.crt
-              name: kube-root-ca.crt
+        - name: vault-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  expirationSeconds: 7200
+              - configMap:
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+                  name: kube-root-ca.crt
       serviceAccountName: application-sa
       containers:
-      - name: infra-backend
-        image: jaypd/backend
-        volumeMounts:
-          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-            name: vault-token
-        env:
-          - name: ENVIRONMENT
-            valueFrom:
-              configMapKeyRef:
-                name: application-cm
-                key: Environment
-          - name: PORT
-            valueFrom:
-              configMapKeyRef:
-                name: application-cm
-                key: Port
-          - name: PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: email-secret
-                key: password
+        - name: infra-backend
+          image: jaypd/infrabackend:42a431ea2b323f876cad8ae62a85349995297d74
+          volumeMounts:
+            - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              name: vault-token
+          env:
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: application-cm
+                  key: Environment
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: application-cm
+                  key: Port
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: password
