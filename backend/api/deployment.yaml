@@ -8,7 +8,6 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-    # tiers haru introduce gara before pushing
       app: backend-api
   template:
     metadata:
@@ -45,3 +44,8 @@ spec:
               configMapKeyRef:
                 name: application-cm
                 key: Port
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: email-secret
+                key: password
